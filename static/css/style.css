@@ -5,7 +5,11 @@
   padding: 8% 0 0;
   margin: auto;
 }
-
+.login-right {
+    width: 800px;
+    padding: 8% 0 0;
+    margin: auto;
+  }
 .form {
   position: relative;
   z-index: 1;
@@ -58,24 +62,12 @@
 }
 
 body {
-  background: #e1e0e0; /* fallback for old browsers */
-  background: -webkit-linear-gradient(right, #e1e0e0, #e1e0e0);
-  background: -moz-linear-gradient(right, #e1e0e0, #e1e0e0);
-  background: -o-linear-gradient(right, #e1e0e0, #e1e0e0);
-  background: linear-gradient(to left, #e1e0e0, #e1e0e0);
+  background: #76b852; /* fallback for old browsers */
+  background: -webkit-linear-gradient(right, #76b852, #8DC26F);
+  background: -moz-linear-gradient(right, #76b852, #8DC26F);
+  background: -o-linear-gradient(right, #76b852, #8DC26F);
+  background: linear-gradient(to left, #76b852, #8DC26F);
   font-family: "Roboto", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;      
 }
-
-.column {
-    float: left;
-    width: 50%;
-  }
-  
-  /* Clear floats after the columns */
-  .row:after {
-    content: "";
-    display: table;
-    clear: both;
-  }

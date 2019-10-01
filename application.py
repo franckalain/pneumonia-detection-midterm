@@ -18,12 +18,11 @@ from gevent.pywsgi import WSGIServer
 import tensorflow as tf
 
 
-import pyrebase
+
 from flask import Flask, render_template, request, redirect, url_for
 import stripe
 import os
 import base64
-import numpy as numpy
 import io
 from PIL import Image
 import keras
@@ -37,8 +36,9 @@ from flask import jsonify
 from flask import Flask
 
 # Define a flask app
-app = Flask(__name__)
+application = Flask(__name__)
 
+import pyrebase
 config = {
 	"apiKey": "AIzaSyAUc2GZi4oA22bjz1Gcw1OLIQWAgGapAXE",
     "authDomain": "imageclassifier-712c4.firebaseapp.com",
@@ -48,13 +48,11 @@ config = {
     "messagingSenderId": "221619179133",
     "appId": "1:221619179133:web:14d777dae04f9d05a32b14"
 }
-
 firebase = pyrebase.initialize_app(config)
-
 auth = firebase.auth()
 
-@app.route('/')
-@app.route('/index', methods=['GET', 'POST'])
+@application.route('/')
+@application.route('/index', methods=['GET', 'POST'])
 def index():
     if (request.method == 'POST'):
             email = request.form['name']
@@ -69,7 +67,7 @@ def index():
                 return render_template('index.html', umessage=unsuccessful)
     return render_template('index.html')
 
-@app.route('/create_account', methods=['GET', 'POST'])
+@application.route('/create_account', methods=['GET', 'POST'])
 def create_account():
     if (request.method == 'POST'):
             email = request.form['name']
@@ -78,7 +76,7 @@ def create_account():
             return render_template('index.html')
     return render_template('create_account.html')
 
-@app.route('/forgot_password', methods=['GET', 'POST'])
+@application.route('/forgot_password', methods=['GET', 'POST'])
 def forgot_password():
     if (request.method == 'POST'):
             email = request.form['name']
@@ -91,19 +89,19 @@ pub_key = 'pk_test_NTpznax6Yy3eHdruwGFRbHSY00fNgoujU5'
 secret_key = 'sk_test_ekHEsZ0D6wMLcJGkenE3PORZ00MGL1bZSp'
 
 stripe.api_key = secret_key
-@app.route('/payment')
+@application.route('/payment')
 def payment():
     return render_template('payment.html', pub_key=pub_key)
 
-@app.route('/thanks')
+@application.route('/thanks')
 def thanks():
     return render_template('thanks.html')
 
-@app.route('/predict')
+@application.route('/predict')
 def predict():
     return render_template('/home.html')
 
-@app.route('/pay', methods=['POST'])
+@application.route('/pay', methods=['POST'])
 def pay():
     
     customer = stripe.Customer.create(email=request.form['stripeEmail'], source=request.form['stripeToken'])
@@ -159,7 +157,7 @@ def model_predict(img_path, model):
     #return render_template('index.html')
 
 
-@app.route('/predict', methods=['GET', 'POST'])
+@application.route('/predict', methods=['GET', 'POST'])
 def upload():
     if request.method == 'POST':
         # Get the file from post request
@@ -191,5 +189,5 @@ if __name__ == '__main__':
     # app.run(port=5002, debug=True)
 
     # Serve the app with gevent
-    http_server = WSGIServer(('0.0.0.0', 5000), app)
+    http_server = WSGIServer(('0.0.0.0', 5000), application)
     http_server.serve_forever()
