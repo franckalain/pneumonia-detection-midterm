@@ -133,7 +133,7 @@ def load_mobilenet_model():
     global model
     model = load_model('classifier_image.h5')
     global graph
-graph = tf.get_default_graph()
+    graph = tf.get_default_graph()
 
 def model_predict(img_path, model):
     img = image.load_img(img_path, target_size=(224, 224))
