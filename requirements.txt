@@ -8,3 +8,4 @@ h5py
 tensorflow
 gunicorn
 stripe
+pyrebase
