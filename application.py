@@ -26,7 +26,7 @@ import base64
 import io
 from PIL import Image
 import keras
-from tensorflow.keras import backend
+from tensorflow.keras import backend as k
 from keras.models import Sequential
 from keras.models import load_model
 from keras.preprocessing.image import ImageDataGenerator
