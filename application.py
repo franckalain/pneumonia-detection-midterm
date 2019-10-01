@@ -74,7 +74,7 @@ def create_account():
             password = request.form['password']
             auth.create_user_with_email_and_password(email, password)
             return render_template('index.html')
-    return render_template('create_account.html')
+    return redirect(url_for('create_account'))
 
 @application.route('/forgot_password', methods=['GET', 'POST'])
 def forgot_password():
