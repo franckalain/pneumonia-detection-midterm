@@ -33,7 +33,7 @@ from flask import jsonify
 from flask import Flask
 
 # Define a flask app
-application = app = Flask(__name__)
+app = Flask(__name__)
 
 import pyrebase
 config = {
@@ -192,5 +192,5 @@ if __name__ == '__main__':
 
     # Serve the app with gevent
     #
-    http_server = WSGIServer(('0.0.0.0', 5000), application)
+    http_server = WSGIServer(('0.0.0.0', 5000), app)
     http_server.serve_forever()
