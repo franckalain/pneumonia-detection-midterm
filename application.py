@@ -33,7 +33,7 @@ from flask import jsonify
 from flask import Flask
 
 # Define a flask app
-app = Flask(__name__)
+application = app = Flask(__name__)
 
 import pyrebase
 config = {
@@ -126,12 +126,14 @@ print('Model loaded. Start serving...')
 #from keras.applications.resnet50 import ResNet50
 #model = ResNet50(weights='imagenet')
 #print('Model loaded. Check http://127.0.0.1:5000/')
-def load_graph():
+
+def init():
     global model
     model = load_model('classifier_image.h5')
-    global graph
-    graph = tf.get_default_graph()
+global graph
+graph = tf.get_default_graph()
     #return graph
+
 
 def model_predict(img_path, model):
     img = image.load_img(img_path, target_size=(224, 224))
@@ -143,7 +145,7 @@ def model_predict(img_path, model):
 
     # Be careful how your trained model deals with the input
     # otherwise, it won't make correct prediction!
-    x = preprocess_input(x, mode='caffe')
+    x = preprocess_input(x)
 
     preds = model.predict(x)
     return preds
@@ -168,15 +170,15 @@ def upload():
         f.save(file_path)
 
         # Make prediction
-        graph = tf.get_default_graph()
+        #graph = tf.get_default_graph()
         with graph.as_default():
-            preds = model_predict(file_path, model)
+                preds = model_predict(file_path, model)
 
-        # Process your result for human
-        pred_class = preds.argmax(axis=-1)            # Simple argmax
-        #pred_class = decode_predictions(preds, top=1)   # ImageNet Decode
-        result = str(pred_class[0])
-        return result
+            # Process your result for human
+                pred_class = preds.argmax(axis=-1)            # Simple argmax
+                #pred_class = decode_predictions(preds, top=1)   # ImageNet Decode
+                result = str(pred_class[0])
+                return result
 
         
         
@@ -186,9 +188,9 @@ def upload():
 
 if __name__ == '__main__':
     # app.run(port=5002, debug=True)
-    #app.run(port=5002, debug=True)
+    #app.run(debug=True)
 
     # Serve the app with gevent
     #
-    http_server = WSGIServer(('0.0.0.0', 5000), app)
+    http_server = WSGIServer(('0.0.0.0', 5000), application)
     http_server.serve_forever()
