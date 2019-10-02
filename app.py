@@ -17,9 +17,6 @@ from werkzeug.utils import secure_filename
 from gevent.pywsgi import WSGIServer
 import tensorflow as tf
 
-
-
-from flask import Flask, render_template, request, redirect, url_for
 import stripe
 import os
 import base64
@@ -28,7 +25,7 @@ from PIL import Image
 import keras
 from tensorflow.keras import backend as k
 from keras.models import Sequential
-from keras.models import load_model
+
 from keras.preprocessing.image import ImageDataGenerator
 from keras.preprocessing.image import img_to_array
 from flask import request
@@ -36,7 +33,7 @@ from flask import jsonify
 from flask import Flask
 
 # Define a flask app
-application = Flask(__name__)
+app = Flask(__name__)
 
 import pyrebase
 config = {
@@ -51,8 +48,8 @@ config = {
 firebase = pyrebase.initialize_app(config)
 auth = firebase.auth()
 
-@application.route('/')
-@application.route('/index', methods=['GET', 'POST'])
+@app.route('/')
+@app.route('/index', methods=['GET', 'POST'])
 def index():
     if (request.method == 'POST'):
             email = request.form['name']
@@ -67,7 +64,7 @@ def index():
                 return render_template('index.html', umessage=unsuccessful)
     return render_template('index.html')
 
-@application.route('/create_account', methods=['GET', 'POST'])
+@app.route('/create_account', methods=['GET', 'POST'])
 def create_account():
     if (request.method == 'POST'):
             email = request.form['name']
@@ -76,7 +73,7 @@ def create_account():
             return render_template('index.html')
     return render_template('create_account.html')
 
-@application.route('/forgot_password', methods=['GET', 'POST'])
+@app.route('/forgot_password', methods=['GET', 'POST'])
 def forgot_password():
     if (request.method == 'POST'):
             email = request.form['name']
@@ -89,19 +86,19 @@ pub_key = 'pk_test_NTpznax6Yy3eHdruwGFRbHSY00fNgoujU5'
 secret_key = 'sk_test_ekHEsZ0D6wMLcJGkenE3PORZ00MGL1bZSp'
 
 stripe.api_key = secret_key
-@application.route('/payment')
+@app.route('/payment')
 def payment():
     return render_template('payment.html', pub_key=pub_key)
 
-@application.route('/thanks')
+@app.route('/thanks')
 def thanks():
     return render_template('thanks.html')
 
-@application.route('/predict')
+@app.route('/predict')
 def predict():
     return render_template('/home.html')
 
-@application.route('/pay', methods=['POST'])
+@app.route('/pay', methods=['POST'])
 def pay():
     
     customer = stripe.Customer.create(email=request.form['stripeEmail'], source=request.form['stripeToken'])
@@ -129,11 +126,12 @@ print('Model loaded. Start serving...')
 #from keras.applications.resnet50 import ResNet50
 #model = ResNet50(weights='imagenet')
 #print('Model loaded. Check http://127.0.0.1:5000/')
-def load_mobilenet_model():
+def load_graph():
     global model
     model = load_model('classifier_image.h5')
     global graph
     graph = tf.get_default_graph()
+    #return graph
 
 def model_predict(img_path, model):
     img = image.load_img(img_path, target_size=(224, 224))
@@ -157,7 +155,7 @@ def model_predict(img_path, model):
     #return render_template('index.html')
 
 
-@application.route('/predict', methods=['GET', 'POST'])
+@app.route('/predict', methods=['GET', 'POST'])
 def upload():
     if request.method == 'POST':
         # Get the file from post request
@@ -170,6 +168,7 @@ def upload():
         f.save(file_path)
 
         # Make prediction
+        graph = tf.get_default_graph()
         with graph.as_default():
             preds = model_predict(file_path, model)
 
@@ -187,7 +186,7 @@ def upload():
 
 if __name__ == '__main__':
     # app.run(port=5002, debug=True)
-    application.run(port=5002, debug=True)
+    app.run(port=5002, debug=True)
 
     # Serve the app with gevent
     #
